@@ -1,0 +1,24 @@
+{
+  "name": "tutorials",
+  "version": "1.0.0",
+  "description": "crud for tutorials",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "mcaamano182",
+  "license": "ISC",
+  "dependencies": {
+    "@types/sequelize": "^4.28.11",
+    "app-root-path": "^3.0.0",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "express-routes-versioning": "^1.0.1",
+    "fs": "^0.0.1-security",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.17.0"
+  }
+}
