@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken")
 const jwt_decode = require("jwt-decode");
 
+const {headers_name} = require('../config/const')
 const usersService = require("../services/users")
+const loginService = require("../services/login");
+const jwt_config = require("../config/jwt.config");
 
-const authorize = (
-    requiredPermissions = () => true
-) => async (req, res, next) => {
+const authorize = (requiredPermissions = () => true) => async (req, res, next) => {
     let authorized = false;
     try {
         const userPermissions = await getUserPermissions(req, res);
@@ -50,10 +51,10 @@ const checkPermission = (requiredPermissions, userPermissions) => {
 };
 
 const getUserPermissions = async (req, res) => {
-    const token = req.headers['user_access_token']
+    const token = req.headers[headers_name.access_token]
     const decoded = jwt_decode(token);
 
-    const user_id =  decoded.user;
+    const user_id =  decoded.id;
     const user = await usersService.getUser(user_id);
 
     try {
@@ -73,4 +74,22 @@ const getUserPermissions = async (req, res) => {
     }
 };
 
-module.exports = authorize;
+const validateTokenCreateTutorial = (req, res, next) => {
+    try {
+        const token = req.header('user_access_token');
+        const verified = jwt.verify(token, jwt_config.TOKEN_SECRET);
+        var difference = Date.now() - verified.expires; // This will give difference in milliseconds
+        var resultInMinute = Math.round(difference / 60000);
+        if(resultInMinute < 5){
+            next();
+        }else{
+            const message = `User access token expired.`;
+            const err = new Error(message, 401);
+            next(err);
+        }
+    } catch (err) {
+        next(err);
+    }
+}
+
+module.exports = {authorize, validateTokenCreateTutorial};

@@ -1,24 +1,25 @@
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, DataTypes) => {
     const Tutorial = sequelize.define("tutorial", {
-        title: {
-            type: Sequelize.STRING,
-            required : true
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey : true,
+            autoIncrement : true
         },
         title: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             required : true
         },
         video_url: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
         },
         description: {
-            type: Sequelize.STRING
+            type: DataTypes.STRING
         },
         published_status: {
-            type: Sequelize.STRING
+            type: DataTypes.STRING
         },
         deleted_at: {
-            type: Sequelize.STRING
+            type: DataTypes.STRING
         }
     }, {
         timestamps: false,

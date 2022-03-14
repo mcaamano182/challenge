@@ -13,8 +13,8 @@ const sequelize = require("sequelize");
 const app = express();
 const initTutorialsScript = fs.readFileSync("./src/migrations/init_tutorials_db.sql").toString();
 const initRolesScript = fs.readFileSync("./src/migrations/init_roles_db.sql").toString();
-const initUsersScript = fs.readFileSync("./src/migrations/init_users_db.sql").toString();
 const initPermissionsScript = fs.readFileSync("./src/migrations/init_permissions_db.sql").toString();
+const initUsersScript = fs.readFileSync("./src/migrations/init_users_db.sql").toString();
 const initRolePermissionsScript = fs.readFileSync("./src/migrations/init_role-permissions_db.sql").toString();
 
 
@@ -24,6 +24,7 @@ app.get('/ping', function (req, res) {
 });
 
 db.sequelize.sync({force: false});
+
 /*db.sequelize.sync({ force: true }).then(() => {
     db.sequelize.query(initTutorialsScript,{type:sequelize.QueryTypes.INSERT});
     db.sequelize.query(initPermissionsScript,{type:sequelize.QueryTypes.INSERT});

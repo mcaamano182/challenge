@@ -1,21 +1,26 @@
 const db = require("../../models");
-const Users = db.User;
+const jwt = require("jsonwebtoken");
+const jwt_config = require("../../config/jwt.config")
 
+const login = async (credentials, res) => {
+    // validaciones
+    const user = await validateToken(credentials,res);
+    if(user){
+        // create token
+        const token = jwt.sign({
+            name: user.name,
+            id: user.id
+        }, jwt_config.TOKEN_SECRET)
 
-const checkUserCredentials = async (req, res) => {
-    try {
-        const user_permissions = await RolePermissions.findAll({
-            where : {
-                role_id : role_id
-            },
-            include: [{model: db.Permission, as: 'permissions', attributes: ['code']}]
+        res.header('user_access_token', token).json({
+            error: null,
+            data: {token}
         })
-        return user_permissions;
-    } catch (err) {
-        throw new Error(err);
+    }else{
+        res.send(401, 'Invalid credentials!');
     }
-};
+}
 
 module.exports = {
-    checkUserCredentials
+    login
 };

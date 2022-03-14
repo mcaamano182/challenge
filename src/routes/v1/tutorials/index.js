@@ -1,43 +1,52 @@
 const express = require('express');
 const router = express.Router();
 
-const jwt = require('../../../middlewares/jwt')
+const {authorize, validateTokenCreateTutorial} = require('../../../middlewares/jwt')
 
 const {
     getTutorials,
     getTutorial,
     deleteTutorial,
+    deleteAllTutorials,
     createTutorial,
     updateTutorial,
+    generateCreateTutorialToken,
 } = require('../../../controllers/tutorials');
 
 router.get(
     '/tutorials',
-    jwt(["VIEW_TUTORIALS"]),
+    authorize(["VIEW_TUTORIALS"]),
     getTutorials
 );
 router.get(
     '/tutorials/:id',
-    jwt(["VIEW_TUTORIAL"]),
+    authorize(["VIEW_TUTORIAL"]),
     getTutorial
 );
 router.delete(
     '/tutorials/:id',
-    jwt(["DELETE_TUTORIAL"]),
+    authorize(["DELETE_TUTORIAL"]),
     deleteTutorial
-
 );
+
 router.post(
     '/tutorials',
     express.json(),
-    jwt(["SAVE_TUTORIAL"]),
+    authorize(["SAVE_TUTORIAL"]),
+    validateTokenCreateTutorial,
     createTutorial
 );
 router.put(
     '/tutorials/:id',
     express.json(),
-    jwt(["SAVE_TUTORIAL"]),
+    authorize(["SAVE_TUTORIAL"]),
     updateTutorial
+);
+router.post(
+    '/tutorials/token',
+    express.json(),
+    authorize(["SAVE_TUTORIAL"]),
+    generateCreateTutorialToken
 );
 
 module.exports = router;
