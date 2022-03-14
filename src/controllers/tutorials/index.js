@@ -3,7 +3,6 @@ const jwt_decode = require("jwt-decode");
 const tutorialService = require('../../services/tutorials');
 const {headers_name} = require('../../config/const')
 const jwt_config = require('../../config/jwt.config')
-const {validateToken} = require("../login");
 const {deleteAllTutorialsVerb} = require('../../config/const')
 
 
