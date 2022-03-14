@@ -2,11 +2,26 @@ const db = require("../../models");
 const jwt = require("jsonwebtoken");
 const jwt_config = require("../../config/jwt.config")
 
+const Users = db.User;
+
+
+const validateToken = async (token, res) => {
+    try {
+        const user = await Users.findOne({
+            where : {
+                email : token.email,
+                password: token.password
+            }
+        })
+        return user;
+    } catch (err) {
+        throw new Error(err);
+    }
+};
+
 const login = async (credentials, res) => {
-    // validaciones
     const user = await validateToken(credentials,res);
     if(user){
-        // create token
         const token = jwt.sign({
             name: user.name,
             id: user.id

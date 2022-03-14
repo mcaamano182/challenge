@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const {authorize, validateTokenCreateTutorial} = require('../../../middlewares/jwt')
+const validations = require('../../../middlewares/validations')
+
 
 const {
     getTutorials,
@@ -34,6 +36,7 @@ router.post(
     express.json(),
     authorize(["SAVE_TUTORIAL"]),
     validateTokenCreateTutorial,
+    validations.validateCreateTutorialParams,
     createTutorial
 );
 router.put(

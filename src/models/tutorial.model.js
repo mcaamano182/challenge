@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         title: {
             type: DataTypes.STRING,
+            allowNull: false,
             required : true
         },
         video_url: {
