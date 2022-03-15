@@ -1,36 +1,9 @@
-const { Op } = require('sequelize');
-
 const db = require("../../models");
 const Tutorial = db.Tutorial;
 
-const getTutorials = async (req, res) => {
-
-    const filters = {where:{[Op.and]:{}}};
-    var sort = {};
-
-    if(req.query.video_url){
-        filters.where.video_url = {[Op.like]:'%'+req.query.video_url+"%"};
-    }
-    if(req.query.title){
-        filters.where.title = {[Op.like]:'%'+req.query.title+'%'};
-    }
-    if(req.query.description){
-        filters.where.description = {[Op.like]:'%'+req.query.description+'%'};
-    }
-    if(req.query.published_status){
-        filters.where.published_status = {[Op.eq]:'%'+req.query.published_status+'%'};
-    }
-    if(req.query.deleted == "true"){
-        filters.where.deleted_at = {[Op.ne]:null};
-    }
-    if(req.query.order == "asc" && req.query.order_by){
-        sort = [[req.query.order_by, "ASC"]];
-    }else  if(req.query.order == "desc" && req.query.order_by){
-        sort = [[req.query.order_by, "DESC"]];
-    }
-
+const getTutorials = async (filters, sort) => {
     try {
-        const response = await Tutorial.findAll({where: filters.where , order: sort});
+        const response = await Tutorial.findAll({where: filters.where , order: sort ? sort : null});
         return response;
     } catch (err) {
         throw new Error(err);
@@ -72,7 +45,7 @@ const updateTutorial = async (id, data) => {
         const response =
             await Tutorial.update(values, options);
 
-        return response.data;
+        return response;
     } catch (err) {
         throw new Error(err);
     }
@@ -84,7 +57,7 @@ const deleteTutorial = async (id) => {
         const options = {where:{id:id}};
         const response =
             await Tutorial.update(values, options);
-        return response.data;
+        return response;
     } catch (err) {
         throw new Error(err);
     }
@@ -97,7 +70,7 @@ const deleteAllTutorials = async () => {
         const response =
             await Tutorial.update(values, options);
 
-        return response.data;
+        return response;
     } catch (err) {
         throw new Error(err);
     }

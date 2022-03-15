@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken")
 const jwt_decode = require("jwt-decode");
+const { Op } = require('sequelize');
 const tutorialService = require('../../services/tutorials');
 const {headers_name} = require('../../config/const')
 const jwt_config = require('../../config/jwt.config')
@@ -8,12 +9,44 @@ const {deleteAllTutorialsVerb} = require('../../config/const')
 
 const getTutorials = async (req, res, next) => {
     try {
-        const response = await tutorialService.getTutorials(req, res);
+        const queryFiltersAndSort = generateQueryFiltersAndSort(req,res);
+        const response = await tutorialService.getTutorials(queryFiltersAndSort.filters, queryFiltersAndSort.sort);
         res.send(response);
     } catch (err) {
+        res.send(err);
         next(err);
     }
 };
+
+const generateQueryFiltersAndSort = function (req, res){
+    const filters = {where:{[Op.and]:{}}};
+    var sort = {};
+
+    if(req.query){
+        if(req.query.video_url){
+            filters.where.video_url = {[Op.like]:'%'+req.query.video_url+"%"};
+        }
+        if(req.query.title){
+            filters.where.title = {[Op.like]:'%'+req.query.title+'%'};
+        }
+        if(req.query.description){
+            filters.where.description = {[Op.like]:'%'+req.query.description+'%'};
+        }
+        if(req.query.published_status){
+            filters.where.published_status = {[Op.eq]:'%'+req.query.published_status+'%'};
+        }
+        if(req.query.deleted == "true"){
+            filters.where.deleted_at = {[Op.ne]:null};
+        }
+        if(req.query.order == "asc" && req.query.order_by){
+            sort = [[req.query.order_by, "ASC"]];
+        }else  if(req.query.order == "desc" && req.query.order_by){
+            sort = [[req.query.order_by, "DESC"]];
+        }
+    }
+
+    return {filters:filters, sort:sort}
+}
 
 const getTutorial = async (req, res, next) => {
     try {
@@ -34,6 +67,7 @@ const createTutorial = async (req, res, next) => {
         res.send(response);
         next();
     } catch (err) {
+        res.status(500).body(err);
         next(err);
     }
 };
@@ -87,7 +121,7 @@ const generateCreateTutorialToken = async (req, res, next) => {
         res.send(token);
         next();
     } catch (err) {
-        next(err);
+        res.send('error processing token validation for create tutorial', 401);
     }
 };
 

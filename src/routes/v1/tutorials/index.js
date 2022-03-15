@@ -9,7 +9,6 @@ const {
     getTutorials,
     getTutorial,
     deleteTutorial,
-    deleteAllTutorials,
     createTutorial,
     updateTutorial,
     generateCreateTutorialToken,

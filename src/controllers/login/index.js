@@ -1,5 +1,4 @@
 const loginService = require('../../services/login');
-const {headers_name} = require('../../config/const')
 
 const login = async (req, res, next) => {
     try {

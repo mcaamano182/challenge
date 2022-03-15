@@ -23,10 +23,10 @@ const authorize = (requiredPermissions = () => true) => async (req, res, next) =
             next();
         } else {
             const message = `User ${req.user} is unauthorized to access ${req.url}`;
-            const err = new Error(message, 401);
-            next(err);
+            next(401, message);
         }
     } catch (err) {
+        res.send(401, err);
         next(err);
     }
 };
@@ -70,6 +70,7 @@ const getUserPermissions = async (req, res) => {
             throw err;
         }
     } catch (err) {
+        res.send(401, err);
         throw err;
     }
 };
@@ -78,14 +79,12 @@ const validateTokenCreateTutorial = (req, res, next) => {
     try {
         const token = req.header('user_access_token');
         const verified = jwt.verify(token, jwt_config.TOKEN_SECRET);
-        var difference = Date.now() - verified.expires; // This will give difference in milliseconds
+        var difference = Date.now() - verified.expires;
         var resultInMinute = Math.round(difference / 60000);
         if(resultInMinute < 5){
             next();
         }else{
-            const message = `User access token expired.`;
-            const err = new Error(message, 401);
-            next(err);
+            res.send(401, 'User access token expired.');
         }
     } catch (err) {
         next(err);
