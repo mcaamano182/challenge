@@ -56,7 +56,8 @@ const getTutorial = async (req, res, next) => {
         res.send(response);
         next();
     } catch (err) {
-        res.status(err.code).send(err.message)
+        res.status(err.code);
+        res.send(err.message)
         next(err);
     }
 };
@@ -123,7 +124,8 @@ const generateCreateTutorialToken = async (req, res, next) => {
         res.send(token);
         next();
     } catch (err) {
-        res.status(401).send('error processing token validation for create tutorial');
+        res.status(401);
+        res.send('error processing token validation for create tutorial');
     }
 };
 

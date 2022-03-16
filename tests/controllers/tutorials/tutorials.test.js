@@ -38,18 +38,12 @@ describe("Tutorials Controller test", function() {
 
         var res = {
             data: {},
-            sendStatus: (status) => {
+            status: (status) => {
                 res.status = status;
                 return this;
             },
             send: (data) => {
                 res.data = data;
-                res.status = 200;
-                return this;
-            },
-            send: (data,status) => {
-                res.data = data;
-                res.status = status;
                 return this;
             }
         };
@@ -108,9 +102,12 @@ describe("Tutorials Controller test", function() {
 
         let res = {
             data: {},
-            send: (data, code) => {
+            send: (data) => {
                 res.data = data;
-                res.status = code;
+                return this;
+            },
+            status: (code) => {
+                res.status= code;
                 return this;
             }
         };
