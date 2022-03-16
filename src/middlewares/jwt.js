@@ -26,7 +26,7 @@ const authorize = (requiredPermissions = () => true) => async (req, res, next) =
             res.status(401).send(message);
         }
     } catch (err) {
-        res.status(401).send(err);
+        res.status(401).send({code: err.code, message: err.message})
         next(err);
     }
 };
@@ -58,6 +58,7 @@ const getUserPermissions = async (req, res) => {
     const user = await usersService.getUser(user_id);
 
     try {
+
         if (user) {
             const response = await usersService.getUserPermissions(user.role_id);
             return response;
@@ -66,7 +67,7 @@ const getUserPermissions = async (req, res) => {
             throw err;
         }
     } catch (err) {
-        res.status(err.code).send(err.message);
+        res.status(err.code).send({code: err.code, message: err.message});
         throw err;
     }
 };
@@ -81,7 +82,7 @@ const validateTokenCreateTutorial = (req, res, next) => {
             next();
         }else{
             const err = new AuthError('User access token expired.');
-            res.status(err.code).send(err.message);
+            res.status(err.code).send({code: err.code, message: err.message});
         }
     } catch (err) {
         next(err);

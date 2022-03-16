@@ -42,6 +42,7 @@ router.put(
     '/tutorials/:id',
     express.json(),
     authorize(["SAVE_TUTORIAL"]),
+    validations.validateCreateTutorialParams,
     updateTutorial
 );
 router.post(

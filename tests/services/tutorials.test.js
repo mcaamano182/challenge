@@ -1,6 +1,8 @@
 const chai = require('chai');
 const expect = chai.expect;
 const { Op } = require('sequelize');
+const {InternalError} = require('../../src/domains/errors')
+
 
 
 const db = require('../../src/models');
@@ -54,11 +56,22 @@ describe("Tutorials Service test", function() {
         }
     });
     it("should test deleteAllTutorials OK", async () => {
-        db.Tutorial.findByPk = async(id) => {
+        db.Tutorial.update = async(id) => {
             return 'ok';
         }
         const tutorials = await deleteAllTutorials();
         expect(tutorials).equal('ok');
+    });
+    it("should test deleteAllTutorials OK", async () => {
+        db.Tutorial.update = async(id) => {
+            throw new InternalError("algo bizarro just happened!");
+        }
+        try{
+            await deleteAllTutorials();
+
+        }catch (err){
+            expect(err.code).equal(500);
+        }
     });
     it("should test createTutorial OK", async () => {
         let tutorial = {
@@ -98,6 +111,10 @@ describe("Tutorials Service test", function() {
             published_status: "published",
             deleted_at: null
         };
+        db.Tutorial.update = async(id) => {
+            return "ok";
+        }
+
         const response = await updateTutorial(1,tutorial);
         expect(response!=null).equal(true);
     });

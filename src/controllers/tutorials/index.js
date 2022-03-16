@@ -13,7 +13,8 @@ const getTutorials = async (req, res, next) => {
         const response = await tutorialService.getTutorials(queryFiltersAndSort.filters, queryFiltersAndSort.sorting);
         res.send(response);
     } catch (err) {
-        res.send(err);
+        res.status(err.code);
+        res.send({code: err.code, message: err.message});
         next(err);
     }
 };
@@ -56,7 +57,8 @@ const getTutorial = async (req, res, next) => {
         res.send(response);
         next();
     } catch (err) {
-        res.status(err.code).send(err.message)
+        res.status(err.code);
+        res.send({code: err.code, message: err.message})
         next(err);
     }
 };
@@ -68,7 +70,7 @@ const createTutorial = async (req, res, next) => {
         res.send(response);
         next();
     } catch (err) {
-        res.status(err.code).send(err.message)
+        res.status(err.code).send({code: err.code, message: err.message})
         next(err);
     }
 };
@@ -78,11 +80,12 @@ const updateTutorial = async (req, res, next) => {
     try {
         const id = req.params.id;
         const tutorial = req.body;
-        const response = await tutorialService.updateTutorial(id, tutorial);
-        res.send(response);
+        await tutorialService.updateTutorial(id, tutorial);
+        res.send();
         next();
     } catch (err) {
-        res.status(err.code).send(err.message)
+        res.status(err.code);
+        res.send({code: err.code, message: err.message})
         next(err);
     }
 };
@@ -91,14 +94,15 @@ const deleteTutorial = async (req, res, next) => {
     try {
         const tutorial = req.params.id;
         if(tutorial === deleteAllTutorialsVerb){
-            const response = await tutorialService.deleteAllTutorials();
-            res.send(response);
+            await tutorialService.deleteAllTutorials();
+            res.send();
         }else{
-            const response = await tutorialService.deleteTutorial(tutorial);
-            res.send(response);
+            await tutorialService.deleteTutorial(tutorial);
+            res.send();
         }
         next();
     } catch (err) {
+        res.status(err.code).send({code: err.code, message: err.message})
         next(err);
     }
 };
@@ -115,6 +119,8 @@ const deleteAllTutorials = async (req, res, next) => {
 
 const generateCreateTutorialToken = async (req, res, next) => {
     try {
+        jwt.verify(req.headers[headers_name.access_token], jwt_config.TOKEN_SECRET);
+
         const decoded = jwt_decode(req.headers[headers_name.access_token]);
         const token = jwt.sign({
             expires: Date.now(),
@@ -123,7 +129,9 @@ const generateCreateTutorialToken = async (req, res, next) => {
         res.send(token);
         next();
     } catch (err) {
-        res.status(401).send('error processing token validation for create tutorial');
+        res.status(401);
+        res.send({code: err.code, message:err});
+        next(err);
     }
 };
 

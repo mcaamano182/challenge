@@ -1,8 +1,11 @@
 const chai = require('chai');
+const jwt = require("jsonwebtoken");
 const {headers_name} = require('../../../src/config/const');
 const expect = chai.expect;
 
 const tutorialService = require('../../../src/services/tutorials');
+
+
 
 const {
     deleteTutorial,
@@ -19,6 +22,10 @@ describe("Tutorials Controller test", function() {
     it("should test generateCreateTutorialToken OK", function() {
         req = {headers:{}};
         req.headers[headers_name.access_token] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTWF0aWFzIiwiaWQiOjEsImlhdCI6MTY0NzIyNDE0M30.hu4gg6wBtMeIrj1V5vQObo2WWl3KE9NgJqpTKytbZVs';
+
+        jwt.verify = (token) => {
+
+        }
 
         const res = {
             data: {},
@@ -37,19 +44,17 @@ describe("Tutorials Controller test", function() {
         req = {headers:{}};
 
         var res = {
-            data: {},
-            sendStatus: (status) => {
+            status: {},
+            status: (status) => {
                 res.status = status;
                 return this;
             },
             send: (data) => {
                 res.data = data;
-                res.status = 200;
                 return this;
             },
-            send: (data,status) => {
+            send: (data) => {
                 res.data = data;
-                res.status = status;
                 return this;
             }
         };
@@ -108,9 +113,12 @@ describe("Tutorials Controller test", function() {
 
         let res = {
             data: {},
-            send: (data, code) => {
+            status: (status) => {
+                res.status = status;
+                return this;
+            },
+            send: (data) => {
                 res.data = data;
-                res.status = code;
                 return this;
             }
         };
@@ -120,7 +128,6 @@ describe("Tutorials Controller test", function() {
         }
 
         await getTutorial(req, res, () => {
-
         });
 
         expect(res.status).equal(undefined);
@@ -154,13 +161,15 @@ describe("Tutorials Controller test", function() {
         let req = {params:{id:1}};
 
         let res = {
-            data: {},
-            send: (data, code) => {
-                res.data = data;
-                res.status = code;
+            status: (status) => {
+                res.status = status;
+                return this;
+            },
+            send: (message) => {
+                res.message = message;
                 return this;
             }
-        };
+        }
 
         tutorialService.getTutorials = function (id) {
             throw new Error('pasó algo bizarro!')
@@ -190,7 +199,6 @@ describe("Tutorials Controller test", function() {
 
         await deleteTutorial(req, res, () => {});
 
-        expect(res.data.id).equal(undefined);
         expect(res.status).equal(200);
 
     });
