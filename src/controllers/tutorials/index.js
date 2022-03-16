@@ -56,8 +56,9 @@ const getTutorial = async (req, res, next) => {
         res.send(response);
         next();
     } catch (err) {
-        res.send(err.message, err.code);
-        next(err);    }
+        res.status(err.code).send(err.message)
+        next(err);
+    }
 };
 
 const createTutorial = async (req, res, next) => {
@@ -67,7 +68,7 @@ const createTutorial = async (req, res, next) => {
         res.send(response);
         next();
     } catch (err) {
-        res.send(err.message, err.code);
+        res.status(err.code).send(err.message)
         next(err);
     }
 };
@@ -81,7 +82,7 @@ const updateTutorial = async (req, res, next) => {
         res.send(response);
         next();
     } catch (err) {
-        res.send(err.message, err.code);
+        res.status(err.code).send(err.message)
         next(err);
     }
 };
@@ -122,7 +123,7 @@ const generateCreateTutorialToken = async (req, res, next) => {
         res.send(token);
         next();
     } catch (err) {
-        res.send('error processing token validation for create tutorial', 401);
+        res.status(401).send('error processing token validation for create tutorial');
     }
 };
 

@@ -10,7 +10,7 @@ const login = async (req, res, next) => {
         next();
 
     } catch (err) {
-        res.send(err.message, err.code);
+        res.status(err.code).send(err.message)
         next(err);
     }
 };

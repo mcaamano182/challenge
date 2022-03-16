@@ -3,7 +3,6 @@ const jwt_decode = require("jwt-decode");
 
 const {headers_name} = require('../config/const')
 const usersService = require("../services/users")
-const loginService = require("../services/login");
 const jwt_config = require("../config/jwt.config");
 const {AuthError} = require("../domains/errors");
 
@@ -23,11 +22,11 @@ const authorize = (requiredPermissions = () => true) => async (req, res, next) =
         if (authorized) {
             next();
         } else {
-            const message = `User ${req.user} is unauthorized to access ${req.url}`;
-            next(401, message);
+            const message = 'You dont have the right access to perform this action!';
+            res.status(401).send(message);
         }
     } catch (err) {
-        res.send(401, err);
+        res.status(401).send(err);
         next(err);
     }
 };
@@ -64,11 +63,10 @@ const getUserPermissions = async (req, res) => {
             return response;
         } else {
             const err = new AuthError('Required header not found in request: user_access_token');
-            res.send(err);
             throw err;
         }
     } catch (err) {
-        res.send(401, err);
+        res.status(err.code).send(err.message);
         throw err;
     }
 };
@@ -82,7 +80,8 @@ const validateTokenCreateTutorial = (req, res, next) => {
         if(resultInMinute < 5){
             next();
         }else{
-            res.send(401, 'User access token expired.');
+            const err = new AuthError('User access token expired.');
+            res.status(err.code).send(err.message);
         }
     } catch (err) {
         next(err);

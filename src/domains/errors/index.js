@@ -1,10 +1,3 @@
-class ApiError extends Error {
-    constructor(err, errorCode) {
-        super(err);
-        this.code = errorCode;
-    }
-}
-
 class AuthError extends Error {
     constructor(err) {
         super(err);
@@ -35,7 +28,6 @@ class NotFoundError extends Error {
 
 module.exports = {
     AuthError,
-    ApiError,
     InternalError,
     BadRequestError,
     NotFoundError
