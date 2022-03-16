@@ -187,7 +187,6 @@ describe("Tutorials Controller test", function() {
 
         await deleteTutorial(req, res, () => {});
 
-        expect(res.data.id).equal(undefined);
         expect(res.status).equal(200);
 
     });

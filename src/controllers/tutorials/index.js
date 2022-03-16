@@ -92,11 +92,11 @@ const deleteTutorial = async (req, res, next) => {
     try {
         const tutorial = req.params.id;
         if(tutorial === deleteAllTutorialsVerb){
-            const response = await tutorialService.deleteAllTutorials();
-            res.send(response);
+            await tutorialService.deleteAllTutorials();
+            res.send();
         }else{
-            const response = await tutorialService.deleteTutorial(tutorial);
-            res.send(response);
+            await tutorialService.deleteTutorial(tutorial);
+            res.send();
         }
         next();
     } catch (err) {
