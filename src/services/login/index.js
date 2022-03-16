@@ -1,11 +1,12 @@
 const db = require("../../models");
 const jwt = require("jsonwebtoken");
 const jwt_config = require("../../config/jwt.config")
+const {AuthError} = require("../../domains/errors");
 
 const Users = db.User;
 
 
-const validateToken = async (token, res) => {
+const validateCredentials = async (token) => {
     try {
         const user = await Users.findOne({
             where : {
@@ -19,20 +20,17 @@ const validateToken = async (token, res) => {
     }
 };
 
-const login = async (credentials, res) => {
-    const user = await validateToken(credentials,res);
+const login = async (credentials) => {
+    const user = await validateCredentials(credentials);
     if(user){
         const token = jwt.sign({
             name: user.name,
             id: user.id
         }, jwt_config.TOKEN_SECRET)
 
-        res.header('user_access_token', token).json({
-            error: null,
-            data: {token}
-        })
+        return token;
     }else{
-        res.send(401, 'Invalid credentials!');
+        throw new AuthError('Invalid credentials!');
     }
 }
 

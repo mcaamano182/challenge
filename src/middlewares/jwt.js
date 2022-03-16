@@ -3,8 +3,8 @@ const jwt_decode = require("jwt-decode");
 
 const {headers_name} = require('../config/const')
 const usersService = require("../services/users")
-const loginService = require("../services/login");
 const jwt_config = require("../config/jwt.config");
+const {AuthError} = require("../domains/errors");
 
 const authorize = (requiredPermissions = () => true) => async (req, res, next) => {
     let authorized = false;
@@ -22,11 +22,11 @@ const authorize = (requiredPermissions = () => true) => async (req, res, next) =
         if (authorized) {
             next();
         } else {
-            const message = `User ${req.user} is unauthorized to access ${req.url}`;
-            const err = new Error(message, 401);
-            next(err);
+            const message = 'You dont have the right access to perform this action!';
+            res.status(401).send(message);
         }
     } catch (err) {
+        res.status(401).send(err);
         next(err);
     }
 };
@@ -62,14 +62,11 @@ const getUserPermissions = async (req, res) => {
             const response = await usersService.getUserPermissions(user.role_id);
             return response;
         } else {
-            const err = new Error(
-                'Required header not found in request: user_access_token',
-                401
-            );
-            res.send(401, 'Required header not found in request: user_access_token');
+            const err = new AuthError('Required header not found in request: user_access_token');
             throw err;
         }
     } catch (err) {
+        res.status(err.code).send(err.message);
         throw err;
     }
 };
@@ -78,14 +75,13 @@ const validateTokenCreateTutorial = (req, res, next) => {
     try {
         const token = req.header('user_access_token');
         const verified = jwt.verify(token, jwt_config.TOKEN_SECRET);
-        var difference = Date.now() - verified.expires; // This will give difference in milliseconds
+        var difference = Date.now() - verified.expires;
         var resultInMinute = Math.round(difference / 60000);
         if(resultInMinute < 5){
             next();
         }else{
-            const message = `User access token expired.`;
-            const err = new Error(message, 401);
-            next(err);
+            const err = new AuthError('User access token expired.');
+            res.status(err.code).send(err.message);
         }
     } catch (err) {
         next(err);

@@ -1,13 +1,16 @@
 const loginService = require('../../services/login');
-const {headers_name} = require('../../config/const')
 
 const login = async (req, res, next) => {
     try {
         const credentials = req.body;
-        const user = await loginService.login(credentials,res)
-        res.send(user);
+        const token = await loginService.login(credentials)
+
+        res.header('user_access_token', token).json(token);
+
         next();
+
     } catch (err) {
+        res.status(err.code).send(err.message)
         next(err);
     }
 };
