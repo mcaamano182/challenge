@@ -1,7 +1,10 @@
+const {BadRequestError} = require("../domains/errors");
+
 const validateCreateTutorialParams = (req, res, next) => {
    const tutorial = req.body;
    if(!tutorial.name || !tutorial.published_status){
-       res.send('invalid parameters, name and published_status are required.', 400);
+       var error = new BadRequestError('invalid parameters, name and published_status are required.');
+       res.send(error.message, error.code);
    }
    next();
 };

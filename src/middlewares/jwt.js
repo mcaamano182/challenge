@@ -5,6 +5,7 @@ const {headers_name} = require('../config/const')
 const usersService = require("../services/users")
 const loginService = require("../services/login");
 const jwt_config = require("../config/jwt.config");
+const {AuthError} = require("../domains/errors");
 
 const authorize = (requiredPermissions = () => true) => async (req, res, next) => {
     let authorized = false;
@@ -62,11 +63,8 @@ const getUserPermissions = async (req, res) => {
             const response = await usersService.getUserPermissions(user.role_id);
             return response;
         } else {
-            const err = new Error(
-                'Required header not found in request: user_access_token',
-                401
-            );
-            res.send(401, 'Required header not found in request: user_access_token');
+            const err = new AuthError('Required header not found in request: user_access_token');
+            res.send(err);
             throw err;
         }
     } catch (err) {

@@ -10,7 +10,7 @@ const {deleteAllTutorialsVerb} = require('../../config/const')
 const getTutorials = async (req, res, next) => {
     try {
         const queryFiltersAndSort = generateQueryFiltersAndSort(req,res);
-        const response = await tutorialService.getTutorials(queryFiltersAndSort.filters, queryFiltersAndSort.sort);
+        const response = await tutorialService.getTutorials(queryFiltersAndSort.filters, queryFiltersAndSort.sorting);
         res.send(response);
     } catch (err) {
         res.send(err);
@@ -20,7 +20,7 @@ const getTutorials = async (req, res, next) => {
 
 const generateQueryFiltersAndSort = function (req, res){
     const filters = {where:{[Op.and]:{}}};
-    var sort = {};
+    var sort = null;
 
     if(req.query){
         if(req.query.video_url){
@@ -45,7 +45,7 @@ const generateQueryFiltersAndSort = function (req, res){
         }
     }
 
-    return {filters:filters, sort:sort}
+    return {filters:filters, sorting:sort}
 }
 
 const getTutorial = async (req, res, next) => {
@@ -56,8 +56,8 @@ const getTutorial = async (req, res, next) => {
         res.send(response);
         next();
     } catch (err) {
-        next(err);
-    }
+        res.send(err.message, err.code);
+        next(err);    }
 };
 
 const createTutorial = async (req, res, next) => {
@@ -67,7 +67,7 @@ const createTutorial = async (req, res, next) => {
         res.send(response);
         next();
     } catch (err) {
-        res.status(500).body(err);
+        res.send(err.message, err.code);
         next(err);
     }
 };
@@ -81,6 +81,7 @@ const updateTutorial = async (req, res, next) => {
         res.send(response);
         next();
     } catch (err) {
+        res.send(err.message, err.code);
         next(err);
     }
 };

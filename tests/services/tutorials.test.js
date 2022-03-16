@@ -41,11 +41,17 @@ describe("Tutorials Service test", function() {
 
     });
     it("should test deleteTutorial OK", async () => {
+        db.Tutorial.findByPk = async(id) => {
+            return null;
+        }
         db.Tutorial.update = async(id) => {
             return "ok";
         }
-        const tutorials = await deleteTutorial(1);
-        expect(tutorials).equal('ok');
+        try{
+            const tutorials = await deleteTutorial(1);
+        }catch (err){
+            expect(err.code).equal(404);
+        }
     });
     it("should test deleteAllTutorials OK", async () => {
         db.Tutorial.findByPk = async(id) => {
