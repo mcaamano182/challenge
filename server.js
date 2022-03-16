@@ -23,16 +23,16 @@ app.get('/ping', function (req, res) {
     res.send('pong');
 });
 
-db.sequelize.sync({force: false});
+//db.sequelize.sync({force: false});
 
-/*db.sequelize.sync({ force: true }).then(() => {
+db.sequelize.sync({ force: true }).then(() => {
     db.sequelize.query(initTutorialsScript,{type:sequelize.QueryTypes.INSERT});
     db.sequelize.query(initPermissionsScript,{type:sequelize.QueryTypes.INSERT});
     db.sequelize.query(initRolesScript,{type:sequelize.QueryTypes.INSERT});
     db.sequelize.query(initUsersScript,{type:sequelize.QueryTypes.INSERT});
     db.sequelize.query(initRolePermissionsScript,{type:sequelize.QueryTypes.INSERT});
     console.log("Drop and re-sync db.");
-});*/
+});
 
 app.use(routes);
 
